@@ -1,3 +1,4 @@
+import os
 import sys
 
 import pygame
@@ -8,13 +9,25 @@ from engine.input import Input
 
 class Game:  # Not meant to be instantiated, gives access to global data and functionality
     current_scene = None
-    fps = 0
+    fps = 60
     dt = 0
     clock = pygame.time.Clock()
     screen_size = pygame.Vector2(0)
     display = None
     events = []
     _quit = False
+    _init = False
+
+    @classmethod
+    def init(cls):
+        cls._init = True
+        cls.display = pygame.display.set_mode(cls.screen_size)
+
+    @classmethod
+    def resize_screen(cls, new_size):
+        cls.screen_size = pygame.Vector2(new_size)
+        if cls._init:
+            cls.display = pygame.display.set_mode(new_size)
 
     @classmethod
     def title(cls, t=None):
@@ -33,7 +46,8 @@ class Game:  # Not meant to be instantiated, gives access to global data and fun
 
     @classmethod
     def start(cls):
-        cls.display = pygame.display.set_mode(cls.screen_size)
+        if not cls._init:
+            raise Exception("Game not initialized")
         while not cls._quit:
             cls.dt = cls.clock.tick(cls.fps)
             Input.update()
@@ -59,6 +73,5 @@ class Game:  # Not meant to be instantiated, gives access to global data and fun
                 if cls._quit:
                     cls.current_scene.quit()
 
-            pygame.display.flip()
         pygame.quit()
         sys.exit()
