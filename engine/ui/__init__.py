@@ -1,7 +1,6 @@
 from .button import Button
-from .font import Font
-from .textinput import TextInput
-
+from . import font
+from .speechbox import SpeechBox
 '''
 UI system
 '''

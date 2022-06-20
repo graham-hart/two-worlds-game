@@ -23,11 +23,11 @@ def clamp(val, mn, mx):
     return min(max(val, mn), mx)
 
 
-def outline(surf: pygame.Surface, border=True):
+def outline(surf: pygame.Surface, border=True, color=(255, 255, 255)):
     outline_surf = pygame.Surface(surf.get_size())
     mask = pygame.mask.from_surface(surf)
     for pt in mask.outline():
-        outline_surf.set_at(pt, (255, 255, 255))
+        outline_surf.set_at(pt, color)
     outline_surf.set_colorkey((0, 0, 0))
     if not border:
         return outline_surf
@@ -37,3 +37,15 @@ def outline(surf: pygame.Surface, border=True):
     border_surf.blit(outline_surf, (2, 1))  # Bottom
     border_surf.blit(outline_surf, (1, 2))  # Right
     return border_surf
+
+
+def stretch_img_center_horiz(img: pygame.Surface, center_min, center_max, new_width):
+    left_cap = clip(img, pygame.Rect(0, 0, center_min, img.get_height()))
+    right_cap = clip(img, pygame.Rect(center_max+1, 0, img.get_width()-center_max-1, img.get_height()))
+    center_img = pygame.transform.scale(clip(img, pygame.Rect(center_min, 0, center_max-center_min+1, img.get_height())), (new_width-center_min-(img.get_width()-center_max)+1, img.get_height()))
+    new_surf = pygame.Surface((new_width, img.get_height()), flags=pygame.SRCALPHA)
+    new_surf.blit(center_img, (center_min, 0))
+    new_surf.blit(left_cap, (0,0))
+    new_surf.blit(right_cap, (new_width-right_cap.get_width(), 0))
+    new_surf.set_colorkey((0,0,0))
+    return new_surf

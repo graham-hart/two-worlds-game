@@ -1,11 +1,13 @@
 import pygame
 
-from .. import utils
-from .style import Style
+from engine import utils
 
+LINE_SPACING = 0.2  # relative to font size
+KERNING = 0.4  # relative to font size
 
+# Color cannot be (0,0,0) because I'm too lazy to fix a bug
 class Font:
-    def __init__(self, path):
+    def __init__(self, path, color=(255, 255, 255)):
         img = pygame.image.load(path).convert_alpha()
         self.chars: dict[str, pygame.Surface] = {}
         self.char_order = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
@@ -14,28 +16,34 @@ class Font:
                            ',', ':', '+', '\'', '!', '?', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '(', ')',
                            '/', '_', '=', '\\', '[', ']', '*', '"', '<', '>', ';']
         curr_w = 0
+        img = utils.color_swap(img, (255, 0, 0), color)
         for x in range(img.get_width()):
-            color = img.get_at((x, 0))
-            if color[0] == 127:
-                ch = utils.clip(img, pygame.Rect(x - curr_w, 0, curr_w, img.get_height()))
-                if Style.FONT_COLOR is not None:
-                    ch = utils.color_swap(ch, (255, 0, 0), Style.FONT_COLOR)
-                self.chars[self.char_order[len(self.chars)]] = ch
+            c = img.get_at((x, 0))
+            if c[0] == 127:
+                self.chars[self.char_order[len(self.chars)]] = utils.clip(img, pygame.Rect(x - curr_w, 0, curr_w,
+                                                                                           img.get_height()))
                 curr_w = 0
             else:
                 curr_w += 1
 
     @property
     def kerning(self):
-        return round(self.chars['A'].get_width() * Style.KERNING)
+        return round(self.chars['A'].get_width() * KERNING)
 
     @property
     def line_height(self):
-        return round(self.chars['A'].get_height() * (1 + Style.LINE_SPACING))
+        return round(self.chars['A'].get_height() * (1 + LINE_SPACING))
 
     @property
-    def char_width(self):
+    def standard_char_width(self):
         return self.chars['A'].get_width()
+
+    def char_width(self, char, font_size=1):
+        if char == "\n":
+            return 0
+        if char == " ":
+            return self.standard_char_width * font_size
+        return self.chars[char].get_width() * font_size
 
     def text_bounds(self, text, font_size=1) -> pygame.Rect:
         curr_w = 0
@@ -47,7 +55,7 @@ class Font:
                 curr_w = 0
                 height += self.line_height
             elif char == ' ':
-                curr_w += self.chars['A'].get_width()
+                curr_w += self.standard_char_width
             else:
                 curr_w += self.chars[char].get_width() + self.kerning
         max_w = max(0, max(max_w, curr_w) - self.kerning)
@@ -63,9 +71,41 @@ class Font:
                 curr_y += self.line_height
                 curr_x = 0
             elif char == ' ':
-                curr_x += self.chars['A'].get_width()
+                if curr_x != 0:
+                    curr_x += self.chars['A'].get_width()
             else:
                 surf.blit(self.chars[char], (curr_x, curr_y))
                 curr_x += self.chars[char].get_width() + self.kerning
-        surf.set_colorkey((0,0,0))
+        surf.set_colorkey((0, 0, 0))
         return pygame.transform.scale(surf, (surf.get_width() * font_size, surf.get_height() * font_size))
+
+
+def line_split_text(text: str, font: Font, font_size, max_width):
+    line_indices = []
+    recent_gap_i = 0
+    tolerance = 10
+    curr_w = 0
+    for i in range(len(text)):
+        char = text[i]
+
+        if char == "\n":
+            curr_w = 0
+            continue
+
+        if char == " ":
+            recent_gap_i = i
+        ch_w = font.text_bounds(char).width+font.kerning
+        curr_w += ch_w
+        if curr_w >= max_width:
+            if i - recent_gap_i > tolerance:
+                recent_gap_i = i
+            line_indices.append(recent_gap_i)
+            curr_w = 0
+
+    for i in line_indices[::-1]:
+        before = text[:i]
+        after = text[i:]
+        if not after.startswith(" "):
+            before += "-"
+        text = before + "\n" + after.removeprefix(" ")
+    return text

@@ -5,6 +5,7 @@ import pygame
 from pygame.locals import *
 
 from engine.input import Input
+from engine.ui.font import Font
 
 
 class Game:  # Not meant to be instantiated, gives access to global data and functionality
@@ -17,11 +18,13 @@ class Game:  # Not meant to be instantiated, gives access to global data and fun
     events = []
     _quit = False
     _init = False
+    font = None
 
     @classmethod
     def init(cls):
         cls._init = True
         cls.display = pygame.display.set_mode(cls.screen_size)
+        cls.font = Font("assets/font.png", color=(1, 1, 1))
 
     @classmethod
     def resize_screen(cls, new_size):

@@ -1,22 +1,27 @@
-from typing import Optional
-
 import pygame
+import engine
+from engine.input import Input, MouseButton
+from .font import Font
 
-from .. import ui
-from .style import Style
 
+PADDING = 5  # px
+COLOR_1 = (0, 128, 255)
+COLOR_2 = (100, 160, 255)
+
+BUTTON_BORDER_RADIUS = 2
+BUTTON_ELEVATION = 10
+BORDER_WIDTH = 2
 
 class Button:
-    def __init__(self, text: str, pos: tuple[int, int], onclick: callable, font: Optional[str] = None,
+    def __init__(self, text: str, pos: tuple[int, int], onclick: callable, font: Font,
                  font_size: float = None):
         self.text = text
         self.click = onclick
         self.pos = pos
-        font_size = font_size if font_size else Style.REGULAR_FONT_SIZE
-        self.font = Style.FONT if not font else Style.get_font(font)
+        self.font = font
         self.text_surf = self.font.render(self.text, font_size)
         self.rect = pygame.Rect(self.pos, (
-            self.text_surf.get_width() + Style.PADDING * 2, self.text_surf.get_height() + Style.PADDING * 2))
+            self.text_surf.get_width() + PADDING * 2, self.text_surf.get_height() + PADDING * 2))
         self.text_rect = self.text_surf.get_rect(center=self.rect.center)
         self.elev_change = 0
         self.is_clicked = False
@@ -25,15 +30,17 @@ class Button:
         pass
 
     def render(self, surf):
-        pygame.draw.rect(surf, Style.COLOR_1, self.rect.move(0, Style.BUTTON_ELEVATION),
-                         border_radius=Style.BUTTON_BORDER_RADIUS)
-        pygame.draw.rect(surf, Style.COLOR_2, self.rect.move(0, self.elev_change),
-                         border_radius=Style.BUTTON_BORDER_RADIUS)
+        pygame.draw.rect(surf, COLOR_1, self.rect.move(0, BUTTON_ELEVATION),
+                         border_radius=BUTTON_BORDER_RADIUS)
+        pygame.draw.rect(surf, COLOR_2, self.rect.move(0, self.elev_change),
+                         border_radius=BUTTON_BORDER_RADIUS)
         surf.blit(self.text_surf, self.text_rect)
 
-    def check_click(self, mouse_pos, mouse_state):
+    def update(self):
+        mouse_pos = Input.mouse_pos()
+        mouse_state = Input.button_down(MouseButton.LEFT)
         in_rect = self.rect.collidepoint(mouse_pos) or self.rect.move(0,
-                                                                      Style.BUTTON_ELEVATION).collidepoint(mouse_pos)
+                                                                      BUTTON_ELEVATION).collidepoint(mouse_pos)
         if self.is_clicked or not mouse_state or not in_rect:
             if (not mouse_state or not in_rect) and self.is_clicked:
                 self.is_clicked = False
@@ -46,14 +53,10 @@ class Button:
         self.text_rect.move_ip(0, self.elev_change)
         return True
 
-    # def update(self, evts):
-
-
     @classmethod
-    def centered(cls, text: str, pos, onclick: callable, font: Optional[str] = None,
+    def centered(cls, text: str, pos, onclick: callable, font: Font,
                  font_size: float = None):
-        fnt: ui.Font = Style.FONT if not font else Style.get_font(font)
-        font_size = font_size if font_size else Style.REGULAR_FONT_SIZE
-        text_size = fnt.text_bounds(text, font_size)
-        pos = (pos[0] - text_size.width / 2 - Style.PADDING, pos[1] - text_size.height / 2 - Style.PADDING)
+        font_size = font_size if font_size else 16
+        text_size = font.text_bounds(text, font_size)
+        pos = (pos[0] - text_size.width / 2 - PADDING, pos[1] - text_size.height / 2 - PADDING)
         return cls(text, pos, onclick, font, font_size)
