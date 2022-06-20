@@ -15,5 +15,5 @@
 * Storyline:
     * Innocent character is helped by damaged hero
     * Sisters who both kind of hate each other, but stick together
-    * Damaged character eventually accidentally allows evil monster into world
+    * Damaged character eventually accidentally allows evil monster into innocent world
         * Innocent must fight off monster
