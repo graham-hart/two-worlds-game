@@ -2,11 +2,13 @@ import os
 
 from bs4 import BeautifulSoup
 
-from .tileset import TileSet
-from .tchunk import Chunk
+from engine.graphics import Camera
 from engine.math import Rect
+from .tchunk import Chunk
+from .tileset import TileSet
 
-class TileMap: #! Cannot use pygame.Rect for collisions, as it only uses ints
+
+class TileMap:  # ! Cannot use pygame.Rect for collisions, as it only uses ints
     COLLISION_LAYERS = [1]
 
     def __init__(self, path):
@@ -36,27 +38,26 @@ class TileMap: #! Cannot use pygame.Rect for collisions, as it only uses ints
                             continue
                         t_size = self.tileset.get_tile_img(tile).get_size()
                         unit_size = self.tileset.unit_size
-                        tiles[x, y] = Rect((pos[0] + x, pos[1] + y), (t_size[0]//unit_size[0], t_size[1]//unit_size[1])), tile
+                        tiles[x, y] = Rect((pos[0] + x, pos[1] + y),
+                                           (t_size[0] // unit_size[0], t_size[1] // unit_size[1])), tile
                 self.layers[l_id][pos] = Chunk(pos, size, tiles)
 
     def collide(self, rect):
         collisions = []
         for l in TileMap.COLLISION_LAYERS:
             for c in self.layers[l]:
-                collisions += c.collision(rect) or []
+                collisions += c.tile_collision(rect) or []
         return collisions
 
     def get_tile(self, pos, layer):
-        chunk = self.layers[layer][pos[0]-pos[0]%self.chunk_size[0], pos[1]-pos[1]%self.chunk_size[1]]
+        chunk = self.layers[layer][pos[0] - pos[0] % self.chunk_size[0], pos[1] - pos[1] % self.chunk_size[1]]
         return chunk.get_tile(pos)
 
-    def render(self, surf, cam=None):
+    def render(self, surf, cam: Camera = None):
         for lid in sorted(self.layers.keys()):
             layer = self.layers[lid]
             for chunk in layer.values():
-                for t in chunk.tiles.values():
-                    img = self.tileset.get_tile_img(t[1])
-                    try:
-                        surf.blit(img, (t[0].pos.x*self.tileset.unit_size[0], t[0].pos.y*self.tileset.unit_size[1]))
-                    except:
-                        pass
+                if chunk.chunk_collision(cam.viewport_rect):
+                    for t in chunk.tiles.values():
+                        img = self.tileset.get_tile_img(t[1])
+                        surf.blit(img, cam.project((t[0].pos.x, t[0].pos.y)))

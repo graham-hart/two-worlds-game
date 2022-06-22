@@ -24,14 +24,14 @@ def clamp(val, mn, mx):
 
 
 def outline(surf: pygame.Surface, border=True, color=(255, 255, 255)):
-    outline_surf = pygame.Surface(surf.get_size())
+    outline_surf = pygame.Surface(surf.get_size(), flags=pygame.SRCALPHA)
     mask = pygame.mask.from_surface(surf)
     for pt in mask.outline():
         outline_surf.set_at(pt, color)
     outline_surf.set_colorkey((0, 0, 0))
     if not border:
         return outline_surf
-    border_surf = pygame.Surface(pygame.Vector2(2) + pygame.Vector2(surf.get_size()))
+    border_surf = pygame.Surface(pygame.Vector2(2) + pygame.Vector2(surf.get_size()), flags=pygame.SRCALPHA)
     border_surf.blit(outline_surf, (1, 0))  # Top
     border_surf.blit(outline_surf, (0, 1))  # Left
     border_surf.blit(outline_surf, (2, 1))  # Bottom

@@ -52,7 +52,7 @@ class Game:  # Not meant to be instantiated, gives access to global data and fun
         if not cls._init:
             raise Exception("Game not initialized")
         while not cls._quit:
-            cls.dt = cls.clock.tick(cls.fps)
+            cls.dt = cls.clock.tick(cls.fps) * 0.001
             Input.update()
 
             cls.events = pygame.event.get()

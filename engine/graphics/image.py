@@ -3,9 +3,9 @@ import os
 import pygame
 
 
-def load(path, alpha=True):
+def load(path):
     img = pygame.image.load(path)
-    return img if pygame.display.get_surface() is None else img.convert() if not alpha else img.convert_alpha()
+    return img if pygame.display.get_surface() is None else img.convert_alpha()
 
 
 def load_dir(path):
