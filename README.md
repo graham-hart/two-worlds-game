@@ -16,7 +16,7 @@
     * Miri is unable to enter hellworld
     * Nera must help the innocent through by opening passageways
 * Storyline:
-    * Miri is helped by damaged hero
+    * Miri is helped by Nera
     * Sisters who both kind of hate each other, but stick together
     * Nera eventually accidentally allows evil monster into innocent world
         * Miri is unable to fight off monster, dies
