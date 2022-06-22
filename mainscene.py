@@ -2,6 +2,8 @@ import pygame
 from pygame.locals import *
 
 from engine.graphics import animations, Camera
+import engine.utils
+from engine.graphics import animations, image, Sprite
 from engine.input import Input, Key
 from engine.state import Game, Scene
 from engine.tile import TileMap
@@ -37,7 +39,3 @@ class MainScene(Scene):
 
         # Use for debugging to find 0, 0
         # pygame.draw.rect(self.game_surf, (255, 0, 0), (self.camera.project((0,0)), (16, 16)))
-        Game.display.blit(pygame.transform.scale(self.game_surf, Game.screen_size), (0, 0))
-        Game.display.blit(pygame.transform.scale(self.ui_surf, Game.screen_size), (0, 0))
-
-        pygame.display.flip()
