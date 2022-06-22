@@ -1,22 +1,23 @@
-from typing import Union
+import pygame
 
 import pygame
 
-from .animations import Animation
+import engine.utils
+from .animations import AnimManager
 
 
 class Sprite:
-    def __init__(self, visuals: Union[Animation, pygame.Surface], pos: pygame.Vector2, centered: bool = False):
-        self.visuals = visuals
+    def __init__(self, pos: pygame.Vector2, centered: bool = False, img=None):
         self.pos = pos
         self.centered = centered
+        self.static_img = img or engine.utils.filled_surf(0, (1, 1))
+        self.current_animation = None
 
-    @property
-    def animated(self) -> bool:
-        return type(self.visuals) == Animation
+    def set_anim(self, anim_id):
+        self.current_animation = AnimManager.new_anim(anim_id)
 
     def image(self) -> pygame.Surface:
-        return self.visuals if not self.animated else self.visuals.image()
+        return self.current_animation.image() if self.current_animation is not None else self.static_img
 
     def render(self, surf: pygame.Surface, camera=None):
         render_pos = self.pos
@@ -27,5 +28,5 @@ class Sprite:
         surf.blit(img, render_pos - anchor)
 
     def update(self):
-        if self.animated:
-            self.visuals.update()
+        if self.current_animation is not None:
+            self.current_animation.update()
