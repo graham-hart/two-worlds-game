@@ -11,4 +11,3 @@
 * Sprite management
 * Entity system
 * Responsive grass?
-* Camera
