@@ -26,8 +26,8 @@ class Rect:
         self.size.y += amount[1]
 
     def update(self, pos, size):
-        self.pos = pygame.Vector2(pos)
-        self.size = pygame.Vector2(size)
+        self.pos.update(*pos)
+        self.size.update(*size)
 
     def colliderect(self, rect):
         return self.right >= rect.left and self.left <= rect.right and self.bottom >= rect.top and self.top <= rect.bottom

@@ -1,9 +1,8 @@
 import pygame
 from pygame.locals import *
 
-from engine.graphics import animations, Camera
-import engine.utils
-from engine.graphics import animations, image, Sprite
+from engine.graphics import Camera, animations
+from engine import Entity
 from engine.input import Input, Key
 from engine.state import Game, Scene
 from engine.tile import TileMap
@@ -12,7 +11,9 @@ from engine.tile import TileMap
 class MainScene(Scene):
     def __init__(self):
         super().__init__()
-        self.anim = animations.AnimManager.new_anim("run")
+        s = animations.AnimManager.anim_data["run"].images[0].get_size()
+        self.player = Entity((10, 10), (s[0]/16, s[1]/16), "player", static_img=animations.AnimManager.anim_data["run"].images[0])
+        self.player.sprite.set_anim("run")
         self.game_surf = pygame.Surface(Game.screen_size * 0.3)
         self.ui_surf = pygame.Surface(Game.screen_size / 3, flags=SRCALPHA)
         self.tm = TileMap("assets/test.tmx")
@@ -22,20 +23,31 @@ class MainScene(Scene):
         if Input.key_down(Key.ESCAPE):
             Game.quit()
         cam_speed = 5*Game.dt
+        movement = pygame.Vector2()
         if Input.key_down(Key.w):
-            self.camera.center.y -= cam_speed
+            movement.y -= cam_speed
         if Input.key_down(Key.s):
-            self.camera.center.y += cam_speed
+            movement.y += cam_speed
         if Input.key_down(Key.a):
-            self.camera.center.x -= cam_speed
+            movement.x -= cam_speed
         if Input.key_down(Key.d):
-            self.camera.center.x += cam_speed
-        self.anim.update()
+            movement.x += cam_speed
+        if movement.length() == 0:
+            self.player.sprite.set_anim(None)
+        elif self.player.sprite.current_animation is None:
+            self.player.sprite.set_anim("run")
+        self.player.sprite.flip[0] = movement.x < 0
+        self.camera.center += movement
+        self.player.pos = self.camera.center
+        self.player.sprite.update()
 
     def render(self):
         self.game_surf.fill(0)
         self.tm.render(self.game_surf, self.camera)
-        self.game_surf.blit(self.anim.image(), self.camera.project(self.camera.center))
-
+        self.player.render(self.game_surf, self.camera)
         # Use for debugging to find 0, 0
-        # pygame.draw.rect(self.game_surf, (255, 0, 0), (self.camera.project((0,0)), (16, 16)))
+        pygame.draw.circle(self.game_surf, (255, 0, 0), self.camera.project(self.player.rect.center), 4)
+        Game.display.blit(pygame.transform.scale(self.ui_surf, Game.screen_size), (0,0))
+        Game.display.blit(pygame.transform.scale(self.game_surf, Game.screen_size), (0,0))
+
+        pygame.display.flip()
