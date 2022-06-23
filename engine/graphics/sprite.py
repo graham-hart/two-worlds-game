@@ -1,3 +1,4 @@
+import math
 from typing import Optional
 
 import pygame
@@ -32,7 +33,7 @@ class Sprite:
         if camera is not None:  # TODO: add camera
             render_pos = camera.project(render_pos)
         img = self.image()
-        surf.blit(img, render_pos)
+        surf.blit(img, (round(render_pos[0]), round(render_pos[1])))
 
     def update(self):
         if self.current_animation is not None:

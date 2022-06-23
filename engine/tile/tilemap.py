@@ -1,3 +1,4 @@
+import math
 import os
 
 from bs4 import BeautifulSoup
@@ -60,4 +61,5 @@ class TileMap:  # ! Cannot use pygame.Rect for collisions, as it only uses ints
                 if chunk.chunk_collision(cam.viewport_rect):
                     for t in chunk.tiles.values():
                         img = self.tileset.get_tile_img(t[1])
-                        surf.blit(img, cam.project((t[0].pos.x, t[0].pos.y)))
+                        r_pos = cam.project((t[0].pos.x, t[0].pos.y))
+                        surf.blit(img, (round(r_pos[0]), round(r_pos[1])))
