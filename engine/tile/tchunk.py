@@ -2,9 +2,10 @@ from engine.math import Rect
 
 
 class Chunk:
-    def __init__(self, pos, size, tiles):
+    def __init__(self, pos, size, tiles, layer):
         self.rect = Rect(pos, size)
         self.tiles = tiles
+        self.layer = layer
 
     def tile_collision(self, rect):
         if not self.rect.colliderect(rect):

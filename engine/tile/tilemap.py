@@ -1,11 +1,10 @@
-import math
 import os
 
 from bs4 import BeautifulSoup
 
 from engine.graphics import Camera
-from engine.math import Rect
 from .tchunk import Chunk
+from .tile import Tile
 from .tileset import TileSet
 
 
@@ -39,9 +38,11 @@ class TileMap:  # ! Cannot use pygame.Rect for collisions, as it only uses ints
                             continue
                         t_size = self.tileset.get_tile_img(tile).get_size()
                         unit_size = self.tileset.unit_size
-                        tiles[x, y] = Rect((pos[0] + x, pos[1] + y),
-                                           (t_size[0] // unit_size[0], t_size[1] // unit_size[1])), tile
-                self.layers[l_id][pos] = Chunk(pos, size, tiles)
+                        name = self.tileset.get_tile_name(tile)
+                        tiles[x, y] = Tile((pos[0] + x, pos[1] + y),
+                                           (t_size[0] // unit_size[0], t_size[1] // unit_size[1]), tile,
+                                           0 if "ramp_" not in name else 1 if "_left" in name else 2, l_id)
+                self.layers[l_id][pos] = Chunk(pos, size, tiles, l_id)
 
     def collide(self, rect):
         collisions = []
@@ -54,12 +55,32 @@ class TileMap:  # ! Cannot use pygame.Rect for collisions, as it only uses ints
         chunk = self.layers[layer][pos[0] - pos[0] % self.chunk_size[0], pos[1] - pos[1] % self.chunk_size[1]]
         return chunk.get_tile(pos)
 
+    def visible_chunks(self, camera):
+        chunks = []
+        for layer in self.layers.keys():
+            for chunk in self.layers[layer]:
+                if chunk.rect.colliderect(camera.viewport_rect): chunks.append(chunk)
+        return chunks
+
+    def tiles(self):
+        tiles = []
+        for layer in self.layers.values():
+            for chunk in layer.values():
+                tiles += list(chunk.tiles.values())
+        return tiles
+
+    def visible_tiles(self, camera):
+        tiles = []
+        for c in self.visible_chunks(camera):
+            tiles += [t for t in c.tiles.values() if t.rect.colliderect(camera.viewport_rect)]
+        return tiles
+
     def render(self, surf, cam: Camera = None):
         for lid in sorted(self.layers.keys()):
             layer = self.layers[lid]
             for chunk in layer.values():
                 if chunk.chunk_collision(cam.viewport_rect):
                     for t in chunk.tiles.values():
-                        img = self.tileset.get_tile_img(t[1])
-                        r_pos = cam.project((t[0].pos.x, t[0].pos.y))
+                        img = self.tileset.get_tile_img(t.gid)
+                        r_pos = cam.project((t.rect.x, t.rect.y))
                         surf.blit(img, (round(r_pos[0]), round(r_pos[1])))

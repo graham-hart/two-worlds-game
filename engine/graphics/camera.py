@@ -48,3 +48,5 @@ class Camera:
 
     def lerp_to(self, pos, amount):
         self.center = self.center.lerp(pos, amount)
+        if self.center.distance_squared_to(pos) < 1/(self.unit_size[0]*self.unit_size[1]):
+            self.center.update(pos)

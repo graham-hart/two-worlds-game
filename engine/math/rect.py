@@ -30,7 +30,7 @@ class Rect:
         self.size.update(*size)
 
     def colliderect(self, rect):
-        return self.right >= rect.left and self.left <= rect.right and self.bottom >= rect.top and self.top <= rect.bottom
+        return self.right > rect.left and self.left < rect.right and self.bottom > rect.top and self.top < rect.bottom
 
     def collidepoint(self, point):
         return self.left < point[0] < self.right and self.top < point[1] < self.bottom

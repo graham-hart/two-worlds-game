@@ -1,7 +1,11 @@
+import os
+
 import pygame
 from bs4 import BeautifulSoup
+
 from engine.graphics import image
-import os
+
+
 class TileSet:
     def __init__(self, path):
         containing_dir = os.path.split(path)[0]
@@ -26,7 +30,8 @@ class TileSet:
         return self.tile_ids[name]
 
     def get_tile_name(self, gid):
-        return {v:k for k,v in self.tile_ids.items()}[gid]
+        return {v: k for k, v in self.tile_ids.items()}[gid]
+
 
 if __name__ == "__main__":
     TileSet("assets/tileset.tsx")

@@ -14,9 +14,9 @@ class MainScene(Scene):
     def __init__(self):
         super().__init__()
         s = animations.AnimManager.anim_data["run"].images[0].get_size()
-        self.player = Entity((10, 10), (s[0]/16, s[1]/16), "player", static_img=animations.AnimManager.anim_data["run"].images[0])
+        self.player = Entity((0, 0), (s[0]/16, s[1]/16), "player", static_img=animations.AnimManager.anim_data["run"].images[0])
         self.player.sprite.set_anim("run")
-        self.game_surf = pygame.Surface(Game.screen_size * 0.2)
+        self.game_surf = pygame.Surface(Game.screen_size * 0.3)
         self.ui_surf = pygame.Surface(Game.screen_size / 3, flags=SRCALPHA)
         self.tm = TileMap("assets/test.tmx")
         self.camera = Camera((10, 10), pygame.Vector2(self.game_surf.get_size()) / 16, (16, 16))
@@ -39,9 +39,9 @@ class MainScene(Scene):
         elif self.player.sprite.current_animation is None:
             self.player.sprite.set_anim("run")
         self.player.sprite.flip[0] = movement.x < 0
-        self.player.pos += movement
-        self.player.sprite.update()
-        self.camera.lerp_to(self.player.pos, min(1, 3*Game.dt))
+        self.player.rigidbody.move(movement)
+        self.player.update(self.tm)
+        self.camera.lerp_to(self.player.pos, min(1, 5*Game.dt))
 
     def render(self):
         self.game_surf.fill(0)
