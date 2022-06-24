@@ -26,10 +26,8 @@ class MainScene(Scene):
             Game.quit()
         speed = 5*Game.dt
         movement = pygame.Vector2()
-        if Input.key_down(Key.w):
-            movement.y -= speed
-        if Input.key_down(Key.s):
-            movement.y += speed
+        if Input.key_down(Key.SPACE) and self.player.on_ground:
+            self.player.rigidbody.add_vel(pygame.Vector2(0, -0.5))
         if Input.key_down(Key.a):
             movement.x -= speed
         if Input.key_down(Key.d):
@@ -48,7 +46,8 @@ class MainScene(Scene):
         self.tm.render(self.game_surf, self.camera)
         self.player.render(self.game_surf, self.camera)
 
-        pygame.draw.circle(self.game_surf, (255, 0, 0), (self.game_surf.get_width()//2, self.game_surf.get_height()//2), 2)
+        # pygame.draw.circle(self.game_surf, (255, 0, 0), (self.game_surf.get_width()//2, self.game_surf.get_height()//2), 2)
+        # pygame.draw.rect(self.game_surf, (0, 0, 255), (self.camera.project((self.player.rect.x, self.player.rect.y)), (self.player.rect.width*16, self.player.rect.height*16)))
         Game.display.blit(pygame.transform.scale(self.ui_surf, Game.screen_size), (0,0))
         Game.display.blit(pygame.transform.scale(self.game_surf, Game.screen_size), (0,0))
 
