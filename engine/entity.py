@@ -13,7 +13,6 @@ class Entity:
         if f"{self.type}_idle" in AnimManager.anim_data.keys():
             self.sprite.set_anim(f"{self.type}_idle")
         self.rigidbody = RigidBody(self)
-        self.on_ground = False
 
     def render(self, surf, cam):
         self.sprite.render(surf, cam)
@@ -31,7 +30,4 @@ class Entity:
         self.rect.center = p
 
     def on_collision(self, collisions, collision_dirs):
-        if collision_dirs["bottom"]:
-            self.on_ground = True
-        else:
-            self.on_ground = False
+        pass

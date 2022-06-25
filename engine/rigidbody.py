@@ -4,7 +4,7 @@ from engine.tile import Tile
 from engine import utils
 class RigidBody:
     GRAVITY = 1
-
+    FRICTION = 0.7
     def __init__(self, entity):
         self.entity = entity
         self.movement = pygame.Vector2(0)
@@ -13,6 +13,7 @@ class RigidBody:
 
     def update(self, tilemap):
         self.velocity.y += RigidBody.GRAVITY * Game.dt
+        self.velocity.x *= RigidBody.FRICTION
         self._move(tilemap, self.movement+self.velocity)
         self.movement = pygame.Vector2(0)
 
@@ -78,3 +79,6 @@ class RigidBody:
     def on_collision(self, collisions, collision_dirs):
         if collision_dirs["bottom"]:
             self.velocity.y = self.velocity.y if self.velocity.y < 0 else 0
+        for c in collisions:
+            if c.ramp != 0:
+                self.velocity *= RigidBody.FRICTION

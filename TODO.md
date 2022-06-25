@@ -8,6 +8,5 @@
 * Draft DW Portal/Transport
 
 ### Graham's List
-* Sprite management
-* Entity system
 * Responsive grass?
+* Better spritesheet parsing (automatically name sprites based on their coordinates in the spritesheet)
