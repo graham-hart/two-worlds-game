@@ -11,7 +11,7 @@ from engine.ui.font import Font
 class Game:  # Not meant to be instantiated, gives access to global data and functionality
     current_scene = None
     fps = 60
-    dt = 0
+    tps = 60
     clock = pygame.time.Clock()
     screen_size = pygame.Vector2(0)
     display = None
@@ -49,11 +49,22 @@ class Game:  # Not meant to be instantiated, gives access to global data and fun
 
     @classmethod
     def start(cls):
+        last_update = pygame.time.get_ticks()
+        mspt = 1000 // cls.tps
         if not cls._init:
             raise Exception("Game not initialized")
         while not cls._quit:
-            cls.dt = cls.clock.tick(cls.fps) * 0.001
+            cls.clock.tick(cls.fps)
             Input.update()
+            if cls.current_scene is not None:
+                current_time = pygame.time.get_ticks()
+                delta = current_time - last_update
+                if delta >= mspt:
+                    last_update = pygame.time.get_ticks()
+                    while delta >= mspt:
+                        cls.current_scene.tick()
+                        delta -= mspt
+                        last_update = pygame.time.get_ticks()
 
             cls.events = pygame.event.get()
             for evt in cls.events:
@@ -70,9 +81,9 @@ class Game:  # Not meant to be instantiated, gives access to global data and fun
                 elif evt.type == QUIT:
                     cls.quit()
 
-            if cls.current_scene:
-                cls.current_scene.update()
+            if cls.current_scene is not None:
                 cls.current_scene.render()
+                cls.current_scene.tick()
                 if cls._quit:
                     cls.current_scene.quit()
 

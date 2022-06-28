@@ -5,7 +5,7 @@ class Scene:
     def render(self):
         pass
 
-    def update(self):
+    def tick(self):
         pass
 
     def quit(self):

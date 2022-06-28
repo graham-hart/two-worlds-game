@@ -6,33 +6,34 @@ import pygame
 from engine.input import Input, Key
 
 class Character(Entity):
-    MAX_SPEED = 2
+    MAX_SPEED = 0.7
 
     def __init__(self, pos, name):
         img = AnimManager.anim_data["run"].images[0]
         self.on_ground = False
         super().__init__(pos, (img.get_width() / 16, img.get_height() / 16), name, static_img=img)
 
-    def update(self, tilemap):
+    def tick(self, tilemap):
         self.move()
         self.rigidbody.velocity.x = utils.clamp(self.rigidbody.velocity.x, -Character.MAX_SPEED, Character.MAX_SPEED)
         self.on_ground = False
-        super().update(tilemap)
+        super().tick(tilemap)
 
     def on_collision(self, collisions, collision_dirs):
         if collision_dirs["bottom"]:
             self.on_ground = True
 
     def move(self):
-        speed = 4 * Game.dt
+        speed = 0.04
         movement = pygame.Vector2()
         if Input.key_down(Key.SPACE) and self.on_ground:
-            self.rigidbody.add_vel(pygame.Vector2(0, -0.3))
+            self.rigidbody.add_vel(pygame.Vector2(0, -0.22))
         if Input.key_down(Key.a):
             movement.x -= speed
         if Input.key_down(Key.d):
             movement.x += speed
         self.rigidbody.add_vel(movement)
+
         if movement.length() == 0:
             self.sprite.set_anim(None)
         elif self.sprite.current_animation is None:

@@ -8,7 +8,7 @@ from .tile import Tile
 from .tileset import TileSet
 
 
-class TileMap:  # ! Cannot use pygame.Rect for collisions, as it only uses ints
+class TileMap:
     COLLISION_LAYERS = [1]
 
     def __init__(self, path):
@@ -41,7 +41,7 @@ class TileMap:  # ! Cannot use pygame.Rect for collisions, as it only uses ints
                         name = self.tileset.get_tile_name(tile)
                         tiles[x, y] = Tile((pos[0] + x, pos[1] + y),
                                            (t_size[0] // unit_size[0], t_size[1] // unit_size[1]), tile,
-                                           0 if "ramp_" not in name else 1 if "_left" in name else 2, l_id)
+                                           0 if "-ramp-" not in name else 1 if "-left" in name else 2, l_id)
                 self.layers[l_id][pos] = Chunk(pos, size, tiles, l_id)
 
     def collide(self, rect):

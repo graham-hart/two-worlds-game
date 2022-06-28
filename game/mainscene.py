@@ -1,29 +1,31 @@
 import pygame
 from pygame.locals import *
 
-from character import Character
 from engine.graphics import Camera
 from engine.input import Input, Key
 from engine.state import Game, Scene
 from engine.tile import TileMap
+from .character import Character
 
 
 class MainScene(Scene):
     def __init__(self):
         super().__init__()
-        self.player = Character((0, 0), "player")
+        self.player = Character((1, 0), "player")
         self.player.sprite.set_anim("run")
-        self.game_surf = pygame.Surface(Game.screen_size / 3)
+        self.game_surf = pygame.Surface(Game.screen_size * 0.3)
         self.ui_surf = pygame.Surface(Game.screen_size / 3, flags=SRCALPHA)
         self.tm = TileMap("assets/test.tmx")
-        self.camera = Camera((10, 10), pygame.Vector2(self.game_surf.get_size()) / 16, (16, 16))
+        self.camera = Camera((0, 0), pygame.Vector2(self.game_surf.get_size()) / 16, (16, 16))
 
-    def update(self):
+    def tick(self):
         if Input.key_down(Key.ESCAPE):
             Game.quit()
-        self.player.update(self.tm)
-        self.camera.center.x += (int(self.player.pos.x) - self.camera.center.x) * 5 * Game.dt
-        self.camera.center.y += (int(self.player.pos.y) - self.camera.center.y) * 5 * Game.dt
+        self.player.tick(self.tm)
+        self.camera.lerp_to(self.player.pos, 0.1)
+
+    def update(self):
+        self.player.update()
 
     def render(self):
         self.game_surf.fill(0)

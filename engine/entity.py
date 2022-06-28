@@ -17,9 +17,11 @@ class Entity:
     def render(self, surf, cam):
         self.sprite.render(surf, cam)
 
-    def update(self, tilemap):
+    def tick(self, tilemap):
+        self.rigidbody.tick(tilemap)
+
+    def update(self):
         self.sprite.update()
-        self.rigidbody.update(tilemap)
 
     @property
     def pos(self):
