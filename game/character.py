@@ -1,9 +1,10 @@
+import pygame
+
 from engine import utils
 from engine.entity import Entity
 from engine.graphics.animations import AnimManager
-from engine.state import Game
-import pygame
 from engine.input import Input, Key
+
 
 class Character(Entity):
     MAX_SPEED = 0.7

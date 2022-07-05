@@ -84,6 +84,7 @@ class Game:  # Not meant to be instantiated, gives access to global data and fun
             if cls.current_scene is not None:
                 cls.current_scene.render()
                 cls.current_scene.tick()
+                cls.current_scene.update()
                 if cls._quit:
                     cls.current_scene.quit()
 

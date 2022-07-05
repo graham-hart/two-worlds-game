@@ -37,4 +37,4 @@ class Sprite:
 
     def update(self):
         if self.current_animation is not None:
-            self.current_animation.tick()
+            self.current_animation.update()

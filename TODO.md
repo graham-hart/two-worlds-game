@@ -11,4 +11,6 @@
 
 ### Graham's List
 * Responsive grass?
-* Better spritesheet parsing (automatically name sprites based on their coordinates in the spritesheet)
+* World management/transport
+* Monsters
+* How the fuck do I code?
