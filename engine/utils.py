@@ -1,5 +1,8 @@
 import pygame
 
+def floor_to_interval(val, interval):
+    return val // interval * interval
+
 
 def clip(surf: pygame.Surface, rect: pygame.Rect):
     return surf.subsurface(rect).copy()

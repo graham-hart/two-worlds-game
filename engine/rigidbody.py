@@ -38,7 +38,7 @@ class RigidBody:
     def _move(self, tilemap, amount: pygame.Vector2):
         all_collisions = []
         collision_dirs = {d: False for d in ["top", "bottom", "left", "right"]}
-        tiles = tilemap.tiles()
+        tiles = tilemap.get_tiles()
         normal_tiles = [t for t in tiles if t.ramp == 0]
         ramp_tiles = [t for t in tiles if t.ramp != 0]
 

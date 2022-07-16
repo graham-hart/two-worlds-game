@@ -15,7 +15,7 @@ class MainScene(Scene):
         self.player.sprite.set_anim("run")
         self.game_surf = pygame.Surface(Game.screen_size * 0.3)
         self.ui_surf = pygame.Surface(Game.screen_size / 3, flags=SRCALPHA)
-        self.tm = TileMap("assets/test.tmx")
+        self.tm = TileMap("assets/test.json")
         self.camera = Camera((0, 0), pygame.Vector2(self.game_surf.get_size()) / 16, (16, 16))
 
     def tick(self):
@@ -29,7 +29,10 @@ class MainScene(Scene):
 
     def render(self):
         self.game_surf.fill(0)
-        self.tm.render(self.game_surf, self.camera)
+        for chunk in self.tm.tiles.values():
+            for layer in sorted(chunk.tiles.keys()):
+                for tile in chunk.tiles[layer].values():
+                    tile.render(self.game_surf, self.camera)
         self.player.render(self.game_surf, self.camera)
 
         # pygame.draw.circle(self.game_surf, (255, 0, 0), (self.game_surf.get_width()//2, self.game_surf.get_height()//2), 2)
