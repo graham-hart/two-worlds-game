@@ -4,12 +4,11 @@ from engine.graphics.animations import AnimManager
 from engine.state import Game
 from engine.tile import TileManager
 from game.mainscene import MainScene
-from tiles import ATile, LeftARampTile
+from tiles import ATile
 
 
 def register_tiles():
     TileManager.register(ATile)
-    TileManager.register(LeftARampTile)
 
 
 def run():

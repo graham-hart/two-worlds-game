@@ -1,31 +1,31 @@
-path: ./tileset.png
-name: "tileset"
+path: ./grass.png
+name: "grass"
 images:
-  grass-topleft:
+  grass-tl:
     pos: 0,0
     size: 16,16
-  grass-topcenter:
+  grass-tcenter:
     pos: 16,0
     size: 16,16
-  grass-topright:
+  grass-tr:
     pos: 32,0
     size: 16,16
-  grass-centerleft:
+  grass-centerl:
     pos: 0,16
     size: 16,16
   grass-centercenter:
     pos: 16,16
     size: 16,16
-  grass-centerright:
+  grass-centerr:
     pos: 32,16
     size: 16,16
-  grass-bottomleft:
+  grass-bl:
     pos: 0,32
     size: 16,16
-  grass-bottomcenter:
+  grass-bcenter:
     pos: 16,32
     size: 16,16
-  grass-bottomright:
+  grass-br:
     pos: 32,32
     size: 16,16
 
@@ -45,15 +45,15 @@ images:
     pos: 64,16
     size: 16,16
 
-  grass-ramp-left:
+  grass-ramp-l:
     pos: 48,32
     size: 16,16
-  grass-ramp-right:
+  grass-ramp-r:
     pos: 64,32
     size: 16,16
-  grass-bend-bottomleft:
+  grass-bend-bl:
     pos: 80,32
     size: 16,16
-  grass-bend-bottomright:
+  grass-bend-br:
     pos: 96,32
     size: 16,16
